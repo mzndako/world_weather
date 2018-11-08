@@ -5,9 +5,15 @@
             Search: <input type="text" v-model="search"  /> 
             <button class="btn btn-primary btn-xs btn-sm" @click="search_now()">Search</button>
         </div>
-        <div class="col-md-4" v-for="(data, index) in locations" :key="index" >
-            <weather v-if="data.title" :data="data"></weather>
+        <div v-if="searching" class="col-md-12" align="center">
+            <img src="@/assets/images/loading.gif" width="200px" height="200px" />
+        </div>
+        <div v-else-if="woeids.length > 0" class="col-md-4" v-for="woeid in woeids" :key="woeid" >
+            <weather :woeid="woeid"></weather>
             <br>
+        </div>
+        <div class="col-md-12" v-else >
+            <h5><i>No results were found. Try changing the keyword!</i></h5>
         </div>
     </div>
 </div>
@@ -22,28 +28,31 @@ export default {
     },
     data() {
         return {
-            locations: {"Istanbul":{}, "Berlin":{}, "London":{}, "Helsinki":{}, "Dublin":{}, "Vancouver":{}},
-            search: ""
+            search: "",
+            searching: false,
+            woeids: []
         }
     },
     mounted() {
-        this.fetchWeather();
+        this.search = this.$route.params.search;
+        this.search_now();
     },
     methods: {
-        fetchWeather(){
-            
-              this.axios.get(this.BASE_API + "?command=search&keyword="+ location).then((response) => {
+        search_now(){
+              const self = this;
+              this.searching = true;  
+              this.axios.get(this.BASE_API + "?command=search&keyword="+ this.search).then((response) => {
                 let data = response.data;
                 // Pick the first element in the array
-                this.locations[location] = data[0];
+                if(data && data.length > 0){
+                    self.woeids = data.map(value=>value.woeid);
+                }else{
+                    self.woeids = [];
+                }
+                self.searching = false;
+                
               }); 
                
-        },
-        search_now(){
-            if(!this.search.trim()){
-                return alert("Enter a location to search")
-            }
-            this.$router.push("/search/"+this.search);
         }
     }
 }
