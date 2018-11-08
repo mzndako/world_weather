@@ -3,6 +3,7 @@
     <div class="row">
         <div class="col-md-4" v-for="(data, index) in locations" :key="index" >
             <weather v-if="data.title" :data="data"></weather>
+            <br>
         </div>
     </div>
 </div>
