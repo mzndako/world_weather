@@ -5,6 +5,9 @@
             Search: <input type="text" v-model="search"  /> 
             <button class="btn btn-primary btn-xs btn-sm" @click="search_now()">Search</button>
         </div>
+        <div v-if="searching" class="col-md-12" align="center">
+            <img src="@/assets/images/loading.gif" width="200px" height="200px" />
+        </div>
         <div class="col-md-4" v-for="(data, index) in locations" :key="index" >
             <weather v-if="data.title" :woeid="data.woeid"></weather>
             <br>
@@ -23,7 +26,8 @@ export default {
     data() {
         return {
             locations: {"Istanbul":{}, "Berlin":{}, "London":{}, "Helsinki":{}, "Dublin":{}, "Vancouver":{}},
-            search: ""
+            search: "",
+            searching: false
         }
     },
     mounted() {
@@ -31,13 +35,13 @@ export default {
     },
     methods: {
         fetchWeather(){
-            
+            this.searching = true;
             for(let location in this.locations){
               this.axios.get(this.BASE_API + "?command=search&keyword="+ location).then((response) => {
                 let data = response.data;
                 // Pick the first element in the array
                 this.locations[location] = data[0];
-                console.log(location, data);
+                this.searching = false;
               }) 
             };
                

@@ -39,17 +39,16 @@ export default {
     },
     methods: {
         search_now(){
-              const self = this;
               this.searching = true;  
               this.axios.get(this.BASE_API + "?command=search&keyword="+ this.search).then((response) => {
                 let data = response.data;
                 // Pick the first element in the array
                 if(data && data.length > 0){
-                    self.woeids = data.map(value=>value.woeid);
+                    this.woeids = data.map(value=>value.woeid);
                 }else{
-                    self.woeids = [];
+                    this.woeids = [];
                 }
-                self.searching = false;
+                this.searching = false;
                 
               }); 
                
