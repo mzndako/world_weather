@@ -15,7 +15,7 @@
 
 <script>
     export default {
-        props: ['data'],
+        props: ['woeid'],
         name: "Weather",
         data(){
             return {
@@ -30,11 +30,10 @@
             }
         },
         mounted(){
-            this.details.title = this.data.title;
             const self = this;
 
             // Fetch the remaining properties using the woeid
-            this.axios.get(this.BASE_API + "?command=location&woeid="+ this.data.woeid).then((response) => {
+            this.axios.get(this.BASE_API + "?command=location&woeid="+ this.woeid).then((response) => {
                 let data = response.data;
                 if(data && data.consolidated_weather){
                     self.details.min_temp = data.consolidated_weather[0].min_temp;
@@ -42,11 +41,12 @@
                     self.details.the_temp = data.consolidated_weather[0].the_temp;
                     self.details.weather_state_abbr = data.consolidated_weather[0].weather_state_abbr;
                 }
+                this.details.title = data.title;
               }); 
         },
         methods: {            
            view_full(){
-               this.$router.push("/weather/"+this.data.woeid);
+               this.$router.push("/weather/"+this.woeid);
            }
         },
         computed: {
